@@ -1,4 +1,4 @@
-resource "kubernetes_namespace" "gateway" {
+resource "kubernetes_namespace_v1" "gateway" {
   metadata {
     name = "gateways"
   }
@@ -11,7 +11,7 @@ resource "kubernetes_manifest" "shared_gateway" {
     kind       = "Gateway"
     metadata = {
       name      = "shared-gw"
-      namespace = kubernetes_namespace.gateway.metadata[0].name
+      namespace = kubernetes_namespace_v1.gateway.metadata[0].name
     }
     spec = {
       gatewayClassName = "envoy-gateway-class"
@@ -20,7 +20,6 @@ resource "kubernetes_manifest" "shared_gateway" {
           name     = "http"
           protocol = "HTTP"
           port     = 80
-          hostname = "*.demo.local"
           allowedRoutes = {
             namespaces = {
               from = "Selector"
@@ -48,13 +47,13 @@ resource "kubernetes_manifest" "app_route" {
     kind       = "HTTPRoute"
     metadata = {
       name      = "${each.key}-route"
-      namespace = kubernetes_namespace.frontend[each.key].metadata[0].name
+      namespace = kubernetes_namespace_v1.frontend[each.key].metadata[0].name
     }
     spec = {
       parentRefs = [
         {
           name      = kubernetes_manifest.shared_gateway.manifest.metadata.name
-          namespace = kubernetes_namespace.gateway.metadata[0].name
+          namespace = kubernetes_namespace_v1.gateway.metadata[0].name
         }
       ]
       hostnames = ["${each.key}.demo.local"]

@@ -12,7 +12,7 @@ locals {
   }
 }
 
-resource "kubernetes_namespace" "frontend" {
+resource "kubernetes_namespace_v1" "frontend" {
   for_each = local.frontends
 
   metadata {
@@ -26,7 +26,7 @@ resource "kubernetes_deployment" "frontend" {
 
   metadata {
     name      = "${each.key}-deploy"
-    namespace = kubernetes_namespace.frontend[each.key].metadata[0].name
+    namespace = kubernetes_namespace_v1.frontend[each.key].metadata[0].name
     labels    = { app = each.key }
   }
 
@@ -62,7 +62,7 @@ resource "kubernetes_service" "frontend" {
 
   metadata {
     name      = "${each.key}-svc"
-    namespace = kubernetes_namespace.frontend[each.key].metadata[0].name
+    namespace = kubernetes_namespace_v1.frontend[each.key].metadata[0].name
     labels    = { app = each.key }
   }
 

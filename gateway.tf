@@ -10,7 +10,7 @@ resource "helm_release" "envoy_gateway" {
   name       = "envoy-gateway"
   repository = "https://gateway.envoyproxy.io/helm"
   chart      = "envoy-gateway"
-  version    = "1.3.0" # pin a version you like
+  version    = "1.6.1" # pin a version you like
 
   namespace        = kubernetes_namespace.envoy_gateway.metadata[0].name
   create_namespace = false
